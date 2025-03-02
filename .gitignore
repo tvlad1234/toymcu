@@ -3,3 +3,5 @@
 *.bit
 *.config
 *.json
+*.vcd
+*.vvp
