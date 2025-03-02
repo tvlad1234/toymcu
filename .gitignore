@@ -1,0 +1,5 @@
+.vscode/
+*.svf
+*.bit
+*.config
+*.json
