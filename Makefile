@@ -8,3 +8,13 @@ SIM_SRC = tb/tb_toy.v
 
 
 include support/colorveri.mk
+
+C_SRC = main.c
+CC = gcc
+
+toyasm : assembler/main.c
+	$(CC) $^ -o $@
+
+asm : toyasm
+	./toyasm programs/hello.asm programs/hello.mem
+

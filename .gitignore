@@ -5,3 +5,5 @@
 *.json
 *.vcd
 *.vvp
+.DS_Store
+toyasm
