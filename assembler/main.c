@@ -293,6 +293,7 @@ int main(int argc, char *argv[])
     }
 
     char line[40][40];
+    char lineptr[100];
     int linenum = 0;
     int r;
     size_t readlen;
@@ -308,15 +309,14 @@ int main(int argc, char *argv[])
     memory[current_addr].instr.imm_type = IMM_DIRECT;
     current_addr++;
 
-    do
+    // Read line from source file
+    while (fgets(lineptr, sizeof(lineptr), srcfile))
     {
-        // Read line from source file
-        char *lineptr;
-        r = getline(&lineptr, &readlen, srcfile); // must replace getline with something else
         linenum++;
         if (lineptr[0] == '#')
             continue;
         char *lineptr_b = lineptr;
+
         // Break it into tokens
         char *p = strtok(lineptr, SEP_SPACE);
         int token_num = 0;
@@ -330,9 +330,6 @@ int main(int argc, char *argv[])
             token_num++;
             p = strtok(NULL, SEP_SPACE);
         }
-
-        // if (lineptr_b)
-        //   free(lineptr_b);
 
         // Process tokens
         int current_token = 0;
@@ -540,7 +537,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-    } while (r != -1);
+    }
 
     fclose(srcfile);
 
