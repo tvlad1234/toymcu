@@ -5,7 +5,8 @@ module toy #(parameter BAUD_DIV = 217)
   (
     input wire i_clk,
     input wire i_reset,
-    output wire o_tx
+    output wire o_tx,
+    input wire i_int
   );
 
   reg [15:0] bus_read_data;
@@ -88,9 +89,10 @@ module toy #(parameter BAUD_DIV = 217)
 
   assign toy_ce = div_ce;
 
+
   // clk_div toy_clk_div(i_clk, i_reset, div_ce);
   tx #(.BAUD_DIV(BAUD_DIV)) toy_tx (i_clk, i_reset, uart_go, uart_tx_data, o_tx, uart_ready);
   ram toy_ram(i_clk, toy_ce, ram_we, ram_write_addr, ram_read_addr, ram_write_data, ram_read_data);
-  cpu toy_cpu(i_clk, toy_ce, i_reset, bus_read_data, bus_write_data, bus_read_addr, bus_write_addr, bus_we, o_halted);
+  cpu toy_cpu(i_clk, toy_ce, i_reset, bus_read_data, bus_write_data, bus_read_addr, bus_write_addr, bus_we, o_halted, i_int);
 
 endmodule

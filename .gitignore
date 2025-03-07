@@ -7,3 +7,4 @@
 *.vvp
 .DS_Store
 toyasm
+toyasm.exe

@@ -10,15 +10,22 @@ module cpu (
     output reg [15:0] o_mem_read_addr,
     output reg [15:0] o_mem_write_addr,
     output reg o_ram_we,
-    output reg o_halted
+    output reg o_halted,
+    input wire i_int
   );
 
+  localparam interrupt_vector = 16'h2;
 
   // Internal signals:
   reg [15:0] pc;
   reg [15:0] next_pc;
   reg [15:0] ir;
 
+  // Interrupt control
+  reg interrupt, int_enable;
+  reg [15:0] o_int_ret_pc;
+
+  // Instruction decoding
   wire [3:0] inst_opcode = ir[15:12];
   wire [3:0] inst_dest = ir[11:8];
   wire [3:0] inst_src_s = ir[7:4];
@@ -149,15 +156,38 @@ module cpu (
   /*
       Next value for PC
   */
-  always @(inst_opcode, reg_data_1, inst_addr_imm, pc)
+
+  reg iret;
+
+  always @(inst_opcode, reg_data_1, inst_addr_imm, pc, reg_addr_1, o_int_ret_pc)
   begin
 
     if((inst_opcode == 4'hF) || (inst_opcode == 4'hC && reg_data_1 == 0) || (inst_opcode == 4'hD && !reg_data_1[15]) )
+    begin
       next_pc = (reg_seg_c << 8) + inst_addr_imm;
-    else if(inst_opcode == 4'hE)
-      next_pc = reg_data_1;
+      iret = 0;
+    end
+
+    else if(inst_opcode == 4'hE) // JMP
+    begin
+      // JMP R0 return from interrupt
+      if(reg_addr_1 == 0)
+      begin
+        next_pc = o_int_ret_pc;
+        iret = 1;
+      end
+      else
+      begin
+        next_pc = reg_data_1;
+        iret = 0;
+      end
+    end
+
     else
+    begin
       next_pc = pc + 1;
+      iret = 0;
+    end
 
   end
 
@@ -167,12 +197,21 @@ module cpu (
     begin
       if (i_ce)
       begin
+
+        if(i_int && int_enable)
+        begin
+          interrupt <= 1;
+          int_enable <= 0;
+        end
+
         if(!o_halted)
         begin
           case (currentState)
 
             state_reset: // from reset to fetch:
             begin
+              interrupt <= 0;
+              int_enable <= 1;
               pc <= 0;
               currentState <= state_read_inst;
             end
@@ -202,7 +241,19 @@ module cpu (
 
             state_writeback: // from writeback back to fetch:
             begin
-              pc <= next_pc;
+
+              if(interrupt)
+              begin
+                pc <= interrupt_vector;
+                o_int_ret_pc <= next_pc;
+                interrupt <= 0;
+              end
+              else
+                pc <= next_pc;
+
+              if(iret)
+                int_enable <= 1;
+
               currentState <= state_read_inst;
             end
 
