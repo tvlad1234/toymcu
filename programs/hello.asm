@@ -1,4 +1,5 @@
 # Hello world and interrupt handler demo
+# prints "Hello world!" on reset and then echoes data received over UART using interrupt
 
 # Jump to main program area
 JL R0, main
@@ -7,15 +8,27 @@ JL R0, main
 # Interrupt handler (must always be at addr 0x0002)
 interrupt_handler:
 
-# save R2 and RC
+# save R2, RC and DS
 PUSH R2
 PUSH RC
+PUSH DS
 
-# sent message over UART
-LDA R2, msg_int
-JL RC, print_string
+# load uart status in R2
+LDA DS, SEGMENT UART_DATA
+LD R2, OFFSET UART_STATUS
 
-# restore R2 and RC
+# if third byte of R2 is 0 (no character received), loop around
+RS R2, R2, R1
+RS R2, R2, R1
+AND R2, R2, R1
+BZ R2, inf_loop
+
+# else read character and send it over uart
+LD R2, OFFSET UART_DATA
+JL RC, uart_tx
+
+# restore R2, RC and DS
+POP DS
 POP RC
 POP R2
 
@@ -37,7 +50,8 @@ LDA R2, msg_hello
 JL RC, print_string
 
 # infinite loop:
-inf_loop: JL R0, inf_loop
+inf_loop:
+JL R0, inf_loop
 
 # end main
 ###################################
@@ -81,18 +95,19 @@ uart_tx:
 
 # save data segment reg, then set data segment to I/O segment (UART is located at 0x0400)
 PUSH DS
-LDA DS, SEGMENT 0x0400
+LDA DS, SEGMENT UART_DATA
 
 # save data to be sent, then load UART status into R2
 PUSH R2
-uart_check: LD R2, 0
+uart_check: LD R2, OFFSET UART_STATUS
 
-# if R2==0 (UART is not ready), check again
+# if first byte of R2 is 0 (UART is not ready), check again
+AND R2, R2, R1
 BZ R2, uart_check
 
 # restore data to be sent, then transmit
 POP R2
-ST R2, 0
+ST R2, OFFSET UART_DATA
 
 # restore DS return to main program (through RC)
 POP DS
@@ -108,8 +123,4 @@ JMP RC
 sp: DW 1023
 
 # Hello message
-msg_hello: DW 'H' 'e' 'l' 'l' 'o' 32 'W' 'o' 'r' 'l' 'd' 10 13 0
-
-# Interrupt message
-msg_int: DW 10 13 'i' 'n' 't' 'e' 'r' 'r' 'u' 'p' 't' 10 13 0
-
+msg_hello: DW 'H' 'e' 'l' 'l' 'o' 32 'W' 'o' 'r' 'l' 'd' '!' 10 13 0

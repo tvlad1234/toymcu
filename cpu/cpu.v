@@ -7,8 +7,7 @@ module cpu (
     input wire i_rst,
     input wire [15:0] i_mem_read_data,
     output wire [15:0] o_mem_write_data,
-    output reg [15:0] o_mem_read_addr,
-    output reg [15:0] o_mem_write_addr,
+    output reg [15:0] o_mem_addr,
     output reg o_ram_we,
     output reg o_halted,
     input wire i_int
@@ -125,32 +124,22 @@ module cpu (
   end
 
   /*
-      Memory write address
-        - immediate address (segmented addressing) for store (h9)
-        - second register data port for indirect store (hB)
-  */
-  always@(inst_opcode, inst_addr_imm, reg_data_2)
-  begin
-    if(inst_opcode == 4'd9)
-      o_mem_write_addr = (reg_seg_d << 8) + inst_addr_imm;
-    else
-      o_mem_write_addr = reg_data_2;
-  end
-
-  /*
     Memory read address
      - PC while fetching
-     - immediate address (segmented addressing) for load (h8)
-     - second register data port for indirect load (hA)
+     - immediate address (segmented addressing) for load (8) and store (9)
+     - second register data port for indirect load (A) and store (B)
   */
+
   always @(currentState, pc, inst_addr_imm, reg_data_2)
   begin
     if(currentState == state_read_inst || currentState == state_fetch)
-      o_mem_read_addr = pc;
-    else if(inst_opcode == 4'd8)
-      o_mem_read_addr = (reg_seg_d << 8) + inst_addr_imm;
+      o_mem_addr = pc;
+    else if(inst_opcode == 4'h8 || inst_opcode == 4'h9)
+      o_mem_addr = (reg_seg_d << 8) + inst_addr_imm;
+    else if(inst_opcode == 4'hA || inst_opcode == 4'hB)
+      o_mem_addr = reg_data_2;
     else
-      o_mem_read_addr = reg_data_2;
+      o_mem_addr = 0;
   end
 
   /*

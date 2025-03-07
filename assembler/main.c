@@ -300,6 +300,12 @@ int main(int argc, char *argv[])
 
     int current_addr = 0;
 
+    labels[num_labels].addr = 0x400;
+    strcpy(labels[num_labels++].name, "UART_DATA");
+
+    labels[num_labels].addr = 0x401;
+    strcpy(labels[num_labels++].name, "UART_STATUS");
+
     // load 1 into R1;
     memory[current_addr].instr.opcode = 7; // LDA
     memory[current_addr].instr.format = INST_FORMAT_2;
@@ -462,6 +468,10 @@ int main(int argc, char *argv[])
                     if (addr == -1)
                     {
                         memory[current_addr].instr.imm_labeled = 1;
+
+                        if (imm_type != IMM_DIRECT)
+                            token_ptr = line[current_token];
+
                         strcpy(memory[current_addr].instr.label_name, token_ptr);
                     }
                     else
@@ -577,7 +587,7 @@ int main(int argc, char *argv[])
 
             int addr = mem->instr.addr;
             int seg = addr / 256;
-            int off = addr - seg;
+            int off = addr - (seg * 256);
 
             if (mem->instr.imm_type == IMM_OFFSET)
                 mem->instr.addr = off;

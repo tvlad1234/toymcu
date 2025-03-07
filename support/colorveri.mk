@@ -1,6 +1,6 @@
 all: ${TOPMODULE}.bit
 
-${TOPMODULE}.json : ${VERILOG_SRC}
+${TOPMODULE}.json : ${VERILOG_SRC} ${VERILOG_MEM}
 	yosys -f "verilog -sv" -p "synth_ecp5 -top ${TOPMODULE} -json $@" ${VERILOG_SRC}
 
 ${TOPMODULE}_out.config : ${TOPMODULE}.json constraints/${TOPMODULE}.lpf

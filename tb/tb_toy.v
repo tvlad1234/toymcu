@@ -8,11 +8,14 @@ module tb_toy;
   reg rst;
   wire halted;
   wire we;
-  wire uart_tx;
-  reg interrupt;
+  wire uart_tx, uart_rx;
+  reg tx_go = 0;
+  reg [7:0] tx_data;
+  wire tx_ready;
 
-  toy #(.BAUD_DIV(1)) dut_toy(clk, rst, uart_tx, interrupt);
+  toy #(.BAUD_DIV(16)) dut_toy(clk, rst, uart_rx, uart_tx);
 
+  tx #(.BAUD_DIV(16)) u_tx (clk, rst, tx_go, tx_data, uart_rx, tx_ready);
   always #1 clk = ~clk;
 
   initial
@@ -23,15 +26,18 @@ module tb_toy;
 
     rst = 0;
     clk = 0;
-    interrupt = 0;
+    tx_go = 0;
+
     #1 rst = 1;
     #2 rst = 0;
 
-    #4000 interrupt = 1;
-    #2 interrupt = 0;
+    tx_data = 65;
+    #8000 tx_go = 1;
+    #2 tx_go = 0;
 
-    #4200 interrupt = 1;
-    #200 interrupt = 0;
+    tx_data = 68;
+    #4000 tx_go = 1;
+    #2 tx_go = 0;
 
     #10000 $finish;
   end

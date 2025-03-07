@@ -1,22 +1,21 @@
 /*
     1024 * 16bits RAM
-      - synchronous read
-      - synchronous write gated by write enable and clock enable
+      - synchronous read and write
 */
 
 `default_nettype none
 
-module ram (
+module ram #(parameter BASE_ADDR = 0, parameter MEM_SIZE = 1024)
+  (
     input wire i_clk,
     input wire i_ce,
     input wire i_we,
-    input wire [9:0] i_w_addr,
-    input wire [9:0] i_r_addr,
+    input wire [15:0] i_addr,
     input wire [15:0] i_w_data,
     output reg [15:0] o_r_data
   );
 
-  reg [15:0] mem [0:1023];
+  reg [15:0] mem [0:(MEM_SIZE - 1)];
   initial
   begin
     $readmemh("programs/hello.mem", mem);
@@ -24,13 +23,13 @@ module ram (
 
   always @ (posedge i_clk)
   begin
-    o_r_data <= mem[i_r_addr];
-  end
+    if(i_addr >= BASE_ADDR && i_addr < MEM_SIZE)
+    begin
+      o_r_data <= mem[i_addr];
 
-  always @ (posedge i_clk)
-  begin
-    if(i_we && i_ce)
-      mem[i_w_addr] <= i_w_data;
+      if(i_we && i_ce)
+        mem[i_addr] <= i_w_data;
+    end
   end
 
 endmodule

@@ -4,7 +4,8 @@ module colorlight_toy_top
   (
     input wire i_clk,
     input wire i_nrst,
-    output wire o_tx
+    input wire i_uart_rx,
+    output wire o_uart_tx
   );
 
   localparam clock_freq = 25000000; // input clock frequency in Hz
@@ -14,9 +15,9 @@ module colorlight_toy_top
 
   always @(posedge i_clk)
   begin
-    rst <= i_nrst;
+    rst <= ~i_nrst;
   end
 
-  toy #(.BAUD_DIV(clock_freq / baudrate)) u_toy(i_clk, rst, o_tx);
+  toy #(.BAUD_DIV(clock_freq / baudrate)) u_toy(i_clk, rst, i_uart_rx, o_uart_tx);
 
 endmodule
