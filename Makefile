@@ -14,9 +14,9 @@ include support/colorveri.mk
 C_SRC = main.c
 CC = gcc
 
-toyasm : assembler/main.c
+toyasm : assembler/main.c assembler/names.c assembler/parse_funcs.c assembler/inst_funcs.c
 	$(CC) $^ -o $@
 
 asm : toyasm
-	./toyasm programs/hello.asm programs/hello.mem
+	./toyasm programs/hello.asm programs/funcs.asm programs/hello_data.asm programs/hello.mem
 
