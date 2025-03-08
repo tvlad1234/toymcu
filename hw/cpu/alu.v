@@ -20,7 +20,7 @@ module alu (
 
   wire [3:0] shamt = i_b[3:0]; // maximum shift allowed is 15bits
 
-  always @ (i_a, i_b, i_op)
+  always @ (*)
   begin
     case (i_op)
       3'b001 :
