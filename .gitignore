@@ -8,3 +8,5 @@
 .DS_Store
 toyasm
 toyasm.exe
+program/*.mem
+

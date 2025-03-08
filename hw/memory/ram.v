@@ -18,7 +18,7 @@ module ram #(parameter BASE_ADDR = 0, parameter MEM_SIZE = 1024)
   reg [15:0] mem [0:(MEM_SIZE - 1)];
   initial
   begin
-    $readmemh("programs/hello.mem", mem);
+    $readmemh("program/hello.mem", mem);
   end
 
   always @ (posedge i_clk)

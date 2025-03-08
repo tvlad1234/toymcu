@@ -8,16 +8,16 @@ out_char:
 PUSH R2
 LDI R2, R2
 
+# return if value in R2 is string terminator (0)
+BZ R2, ret_print_string
+
 # call UART Tx function, link through RC
 PUSH RC
 JL RC, uart_tx
 POP RC
 
-# return if value in R2 is string terminator (0)
-BZ R2, ret_print_string
-POP R2
-
 # increment message pointer
+POP R2
 INC R2
 
 # jump to reading and writing next character
@@ -50,10 +50,10 @@ BZ R2, uart_check
 # restore data to be sent, then transmit
 POP R2
 ST R2, OFFSET UART_DATA
-# sdfdsf
-# restore DS return to main program (through RC)
-POP DS
 
+# restore DS and return to main program (through RC)
+POP DS
 JMP RC
+
 # end uart_tx
 ###################################

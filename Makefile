@@ -1,22 +1,4 @@
-PROJ = toy
-TOPMODULE = colorlight_toy_top
+TOY_PROGRAM_NAME = hello
+TOY_PROGRAM_SRC = program/hello.asm program/funcs.asm
 
-VERILOG_SRC = cpu/cpu.v cpu/alu.v cpu/reg_file.v memory/ram.v peripherals/tx.v peripherals/rx.v peripherals/uart.v soc/toy.v colorlight_top/colorlight_toy_top.v
-
-VERILOG_MEM = programs/hello.mem
-
-SIM_TOP = tb_toy
-SIM_SRC = tb/tb_toy.v
-
-
-include support/colorveri.mk
-
-C_SRC = main.c
-CC = gcc
-
-toyasm : assembler/main.c assembler/names.c assembler/parse_funcs.c assembler/inst_funcs.c
-	$(CC) $^ -o $@
-
-asm : toyasm
-	./toyasm programs/hello.asm programs/funcs.asm programs/hello_data.asm programs/hello.mem
-
+include toy_kit.mk
