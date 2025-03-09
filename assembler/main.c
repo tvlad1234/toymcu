@@ -57,6 +57,9 @@ int main(int argc, char *argv[])
     addLabel(&labels[num_labels++], 0x422, "TIM_EN");
     addLabel(&labels[num_labels++], 0x423, "TIM_CNT_CMP");
 
+    addLabel(&labels[num_labels++], 0x430, "GPIO_DATA");
+    addLabel(&labels[num_labels++], 0x431, "GPIO_TOGGLE");
+
     /*
     // load 1 into R1;
     memory[current_addr].instr.opcode = 7; // LDA

@@ -43,6 +43,11 @@ JMP RC
 # Timer counter interrupt
 timer_cnt_int:
 
+# toggle GPIO bit 0
+LDA DS, SEGMENT GPIO_DATA
+LDA R2, 0x01
+ST R2, OFFSET GPIO_TOGGLE
+
 # load message address in R2
 LDA R2, OFFSET msg_timer
 
