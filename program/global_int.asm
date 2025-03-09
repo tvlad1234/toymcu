@@ -23,6 +23,18 @@ XOR R4, R3, R2
 LDA CS, SEGMENT jmp_uart
 BZ R4, OFFSET jmp_uart
 
+# check if int == 2:
+INC R3
+XOR R4, R3, R2
+LDA CS, SEGMENT jmp_timer_tick
+BZ R4, OFFSET jmp_timer_tick
+
+# check if int == 3:
+INC R3
+XOR R4, R3, R2
+LDA CS, SEGMENT jmp_timer_cnt
+BZ R4, OFFSET jmp_timer_cnt
+
 # Return from interrupt (JMP R0 will eventually be an IRET macro)
 int_ret:
   POP R4
@@ -38,6 +50,22 @@ jmp_uart:
   LDA CS, SEGMENT uart_int
   PUSH RC
   JL RC, OFFSET uart_int
+  POP RC
+  LDA CS, SEGMENT int_ret
+  JL R0, OFFSET int_ret
+
+jmp_timer_tick:
+  LDA CS, SEGMENT timer_tick_int
+  PUSH RC
+  JL RC, OFFSET timer_tick_int
+  POP RC
+  LDA CS, SEGMENT int_ret
+  JL R0, OFFSET int_ret
+
+jmp_timer_cnt:
+  LDA CS, SEGMENT timer_cnt_int
+  PUSH RC
+  JL RC, OFFSET timer_cnt_int
   POP RC
   LDA CS, SEGMENT int_ret
   JL R0, OFFSET int_ret

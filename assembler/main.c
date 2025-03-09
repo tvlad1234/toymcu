@@ -49,7 +49,13 @@ int main(int argc, char *argv[])
 
     addLabel(&labels[num_labels++], 0x400, "UART_DATA");
     addLabel(&labels[num_labels++], 0x401, "UART_STATUS");
+
     addLabel(&labels[num_labels++], 0x410, "INT_CTRL");
+
+    addLabel(&labels[num_labels++], 0x420, "TIM_CNT");
+    addLabel(&labels[num_labels++], 0x421, "TIM_PRESC");
+    addLabel(&labels[num_labels++], 0x422, "TIM_EN");
+    addLabel(&labels[num_labels++], 0x423, "TIM_CNT_CMP");
 
     /*
     // load 1 into R1;
