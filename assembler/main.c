@@ -5,7 +5,7 @@
 
 #include "assembler_types.h"
 
-label_t labels[50];
+label_t labels[1024];
 int num_labels = 0;
 
 mem_loc_t memory[1024];
@@ -49,7 +49,9 @@ int main(int argc, char *argv[])
 
     addLabel(&labels[num_labels++], 0x400, "UART_DATA");
     addLabel(&labels[num_labels++], 0x401, "UART_STATUS");
+    addLabel(&labels[num_labels++], 0x410, "INT_CTRL");
 
+    /*
     // load 1 into R1;
     memory[current_addr].instr.opcode = 7; // LDA
     memory[current_addr].instr.format = INST_FORMAT_2;
@@ -58,6 +60,7 @@ int main(int argc, char *argv[])
     memory[current_addr].instr.addr = 1;
     memory[current_addr].instr.imm_type = IMM_DIRECT;
     current_addr++;
+    */
 
     for (int i = 1; i < argc - 1; i++)
     {
