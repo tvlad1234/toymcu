@@ -42,11 +42,7 @@ void format2inst(instr_t *instr, int opcode, int rd, int addr, int imm_type, cha
     instr->imm_type = imm_type;
 
     if (imm_type != IMM_DIRECT)
-    {
         strcpy(instr->label_name, label_name);
-        printf("label: %s\n\r", label_name);
-    }
-        
 }
 
 void macroIncDec(int macro, int rd, mem_loc_t *mem, int *current_addr)
@@ -64,7 +60,7 @@ void macroIncDec(int macro, int rd, mem_loc_t *mem, int *current_addr)
     *current_addr = *current_addr + 1;
 }
 
-void macroPop(int macro, int rd, mem_loc_t *mem, int *current_addr)
+void macroPop(int rd, mem_loc_t *mem, int *current_addr)
 {
     // load rd from stack
     mem->type = MEM_TYPE_INST;
@@ -76,7 +72,7 @@ void macroPop(int macro, int rd, mem_loc_t *mem, int *current_addr)
     macroIncDec(0, 13, mem + 1, current_addr);
 }
 
-void macroPush(int macro, int rd, mem_loc_t *mem, int *current_addr)
+void macroPush(int rd, mem_loc_t *mem, int *current_addr)
 {
     // decrement stack pointer
     macroIncDec(1, 13, mem, current_addr);
@@ -89,13 +85,13 @@ void macroPush(int macro, int rd, mem_loc_t *mem, int *current_addr)
     *current_addr = *current_addr + 1;
 }
 
-void macroCall(int macro, int addr, mem_loc_t *mem, int *current_addr)
+void macroCall(mem_loc_t *mem, int *current_addr)
 {
     char *func_name = mem->instr.label_name;
     // printf("CALL %s at addr %d\n\r", func_name, *current_addr);
 
     // push RC
-    macroPush(macro, 12, mem, current_addr);
+    macroPush(12, mem, current_addr);
     mem += 2;
 
     // set code segment
@@ -112,8 +108,7 @@ void macroCall(int macro, int addr, mem_loc_t *mem, int *current_addr)
     mem++;
 
     // pop RC
-    macroPop(macro, 12, mem, current_addr);
-
+    macroPop(12, mem, current_addr);
 }
 
 void showMemLoc(mem_loc_t *mem)

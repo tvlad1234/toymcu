@@ -116,13 +116,13 @@ int getReg(char name[], int comma);
 void assert_reg(int reg, int linenum, char *filename);
 int getValue(char token_ptr[]);
 void getImm(char str1[], char str2[], int *imm_p, int *type_p);
-void parseLine(char *lineptr, int linenum, char *filename);
+void parseLine(char *lineptr, int linenum, char *filename, mem_loc_t *mem, int *ca_ptr);
 
 uint16_t machine_inst(instr_t *inst);
 void format1inst(instr_t *instr, int opcode, int rd, int rs, int rt);
 void macroIncDec(int macro, int rd, mem_loc_t *mem, int *current_addr);
 void showMemLoc(mem_loc_t *mem);
 
-void macroPop(int macro, int rd, mem_loc_t *mem, int *current_addr);
-void macroPush(int macro, int rd, mem_loc_t *mem, int *current_addr);
-void macroCall(int macro, int addr, mem_loc_t *mem, int *current_addr);
+void macroPop(int rd, mem_loc_t *mem, int *current_addr);
+void macroPush(int rd, mem_loc_t *mem, int *current_addr);
+void macroCall(mem_loc_t *mem, int *current_addr);

@@ -33,14 +33,16 @@ void assembleFile(char *filename)
 
     // Read and parse file line by line
     while (fgets(lineptr, sizeof(lineptr), srcfile))
-        parseLine(lineptr, linenum++, filename);
+    {
+        mem_loc_t *m = mem_pass1 + current_addr;
+        parseLine(lineptr, linenum++, filename, m, &current_addr);
+    }
 
     fclose(srcfile);
 }
 
 int main(int argc, char *argv[])
 {
-
     if (argc < 3)
     {
         printf("Not enough arguments!\n\r");
@@ -90,13 +92,13 @@ int main(int argc, char *argv[])
                 macroIncDec(macro, rd, mem, &current_addr);
 
             else if (macro == MACRO_PUSH)
-                macroPush(macro, rd, mem, &current_addr);
+                macroPush(rd, mem, &current_addr);
 
             else if (macro == MACRO_POP)
-                macroPop(macro, rd, mem, &current_addr);
-                
+                macroPop(rd, mem, &current_addr);
+
             else if (macro == MACRO_CALL)
-                macroCall(macro, 0, mem, &current_addr);
+                macroCall(mem, &current_addr);
         }
         else
             current_addr++;
@@ -158,11 +160,9 @@ int main(int argc, char *argv[])
             current_addr++;
     }
 
-    
     printf("\n\rSecond pass result:\n\r");
     for (int i = 0; i < num_loc_2; i++)
         showMemLoc(&mem_pass2[i]);
-    
 
     printf("%d memory locations used\n\n\r", num_loc_2);
 
