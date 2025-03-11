@@ -33,7 +33,23 @@ void format1inst(instr_t *instr, int opcode, int rd, int rs, int rt)
     instr->imm_type = IMM_DIRECT;
 }
 
-void macroIncDec(int macro, int rd, instr_t *instr)
+void format2inst(instr_t *instr, int opcode, int rd, int addr, int imm_type, char *label_name)
+{
+    instr->opcode = opcode;
+    instr->format = INST_FORMAT_2;
+    instr->rd = rd;
+    instr->addr = addr;
+    instr->imm_type = imm_type;
+
+    if (imm_type != IMM_DIRECT)
+    {
+        strcpy(instr->label_name, label_name);
+        printf("label: %s\n\r", label_name);
+    }
+        
+}
+
+void macroIncDec(int macro, int rd, mem_loc_t *mem, int *current_addr)
 {
     int opcode;
     if (macro)      // 0 is inc, 1 is dec
@@ -41,7 +57,63 @@ void macroIncDec(int macro, int rd, instr_t *instr)
     else
         opcode = 1; // ADD
 
-    format1inst(instr, opcode, rd, rd, 1);
+    format1inst(&mem->instr, opcode, rd, rd, 1);
+
+    mem->type = MEM_TYPE_INST;
+    mem->addr = *current_addr;
+    *current_addr = *current_addr + 1;
+}
+
+void macroPop(int macro, int rd, mem_loc_t *mem, int *current_addr)
+{
+    // load rd from stack
+    mem->type = MEM_TYPE_INST;
+    mem->addr = *current_addr;
+    format1inst(&mem->instr, 0x0A, rd, 0, 13);
+    *current_addr = *current_addr + 1;
+
+    // increment stack pointer
+    macroIncDec(0, 13, mem + 1, current_addr);
+}
+
+void macroPush(int macro, int rd, mem_loc_t *mem, int *current_addr)
+{
+    // decrement stack pointer
+    macroIncDec(1, 13, mem, current_addr);
+    mem++;
+
+    // store rd to stack
+    mem->type = MEM_TYPE_INST;
+    mem->addr = *current_addr;
+    format1inst(&mem->instr, 0x0B, rd, 0, 13);
+    *current_addr = *current_addr + 1;
+}
+
+void macroCall(int macro, int addr, mem_loc_t *mem, int *current_addr)
+{
+    char *func_name = mem->instr.label_name;
+    // printf("CALL %s at addr %d\n\r", func_name, *current_addr);
+
+    // push RC
+    macroPush(macro, 12, mem, current_addr);
+    mem += 2;
+
+    // set code segment
+    format2inst(&mem->instr, 7, 14, mem->instr.addr, IMM_SEGMENT, func_name);
+    mem->addr = *current_addr;
+    *current_addr = *current_addr + 1;
+    mem++;
+
+    // JL RC, OFFSET func_name
+    format2inst(&mem->instr, 0xF, 12, mem->instr.addr, IMM_OFFSET, func_name);
+    mem->instr.imm_labeled = 1;
+    mem->addr = *current_addr;
+    *current_addr = *current_addr + 1;
+    mem++;
+
+    // pop RC
+    macroPop(macro, 12, mem, current_addr);
+
 }
 
 void showMemLoc(mem_loc_t *mem)

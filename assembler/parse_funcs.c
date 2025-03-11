@@ -88,8 +88,8 @@ void getImm(char str1[], char str2[], int *imm_p, int *type_p)
 }
 
 extern label_t labels[];
-extern mem_loc_t memory[];
-extern int num_labels, num_mem_loc, current_addr;
+extern mem_loc_t mem_pass1[];
+extern int num_labels, num_loc_1, current_addr;
 
 void parseLine(char *lineptr, int linenum, char *filename)
 {
@@ -125,9 +125,9 @@ void parseLine(char *lineptr, int linenum, char *filename)
         token_ptr[strlen(token_ptr) - 1] = 0;
 
         strcpy(labels[num_labels].name, token_ptr);
-        labels[num_labels].addr = current_addr;
-
-        printf("Label \"%s\" at addr %d\n\r", labels[num_labels].name, labels[num_labels].addr);
+        // labels[num_labels].addr = current_addr;
+        mem_pass1[current_addr].label_id = num_labels;
+        // printf("Label \"%s\" at addr %d\n\r", labels[num_labels].name, labels[num_labels].addr);
 
         num_labels++;
         token_ptr = line[++current_token];
@@ -161,12 +161,12 @@ void parseLine(char *lineptr, int linenum, char *filename)
             while (current_token < token_num - 1)
             {
                 token_ptr = line[++current_token];
-                memory[current_addr].addr = current_addr;
-                memory[current_addr].type = MEM_TYPE_DATA;
-                memory[current_addr].instr.filename = filename;
-                memory[current_addr].instr.linenum = linenum;
+                mem_pass1[current_addr].addr = current_addr;
+                mem_pass1[current_addr].type = MEM_TYPE_DATA;
+                mem_pass1[current_addr].instr.filename = filename;
+                mem_pass1[current_addr].instr.linenum = linenum;
                 int data = getValue(token_ptr);
-                memory[current_addr].data = data;
+                mem_pass1[current_addr].data = data;
                 current_addr++;
             }
         }
@@ -179,10 +179,10 @@ void parseLine(char *lineptr, int linenum, char *filename)
 
         else if (line_type == LINE_OPCODE)
         {
-            memory[current_addr].instr.opcode = opcode;
-            memory[current_addr].instr.filename = filename;
-            memory[current_addr].instr.linenum = linenum;
-            memory[current_addr].type = MEM_TYPE_INST;
+            mem_pass1[current_addr].instr.opcode = opcode;
+            mem_pass1[current_addr].instr.filename = filename;
+            mem_pass1[current_addr].instr.linenum = linenum;
+            mem_pass1[current_addr].type = MEM_TYPE_INST;
 
             token_ptr = line[++current_token];
 
@@ -198,7 +198,7 @@ void parseLine(char *lineptr, int linenum, char *filename)
             else
                 instr_format = INST_FORMAT_2;
 
-            memory[current_addr].instr.format = instr_format;
+            mem_pass1[current_addr].instr.format = instr_format;
 
             // parameter parsing
             if (instr_format == INST_FORMAT_1)
@@ -208,7 +208,7 @@ void parseLine(char *lineptr, int linenum, char *filename)
                 // d
                 reg = getReg(token_ptr, 1);
                 assert_reg(reg, linenum, filename);
-                memory[current_addr].instr.rd = reg;
+                mem_pass1[current_addr].instr.rd = reg;
                 token_ptr = line[++current_token];
 
                 // s
@@ -216,16 +216,16 @@ void parseLine(char *lineptr, int linenum, char *filename)
                 {
                     reg = getReg(token_ptr, 1);
                     assert_reg(reg, linenum, filename);
-                    memory[current_addr].instr.rs = reg;
+                    mem_pass1[current_addr].instr.rs = reg;
                     token_ptr = line[++current_token];
                 }
                 else
-                    memory[current_addr].instr.rs = 0;
+                    mem_pass1[current_addr].instr.rs = 0;
 
                 // t
                 reg = getReg(token_ptr, 0);
                 assert_reg(reg, linenum, filename);
-                memory[current_addr].instr.rt = reg;
+                mem_pass1[current_addr].instr.rt = reg;
                 token_ptr = line[++current_token];
             }
 
@@ -234,27 +234,27 @@ void parseLine(char *lineptr, int linenum, char *filename)
                 // d
                 int reg = getReg(token_ptr, 1);
                 assert_reg(reg, linenum, filename);
-                memory[current_addr].instr.rd = reg;
+                mem_pass1[current_addr].instr.rd = reg;
                 token_ptr = line[++current_token];
 
                 int imm_type, addr;
 
                 getImm(token_ptr, line[++current_token], &addr, &imm_type);
 
-                memory[current_addr].instr.imm_type = imm_type;
+                mem_pass1[current_addr].instr.imm_type = imm_type;
                 if (addr == -1)
                 {
-                    memory[current_addr].instr.imm_labeled = 1;
+                    mem_pass1[current_addr].instr.imm_labeled = 1;
 
                     if (imm_type != IMM_DIRECT)
                         token_ptr = line[current_token];
 
-                    strcpy(memory[current_addr].instr.label_name, token_ptr);
+                    strcpy(mem_pass1[current_addr].instr.label_name, token_ptr);
                 }
                 else
                 {
-                    memory[current_addr].instr.imm_labeled = 0;
-                    memory[current_addr].instr.addr = addr;
+                    mem_pass1[current_addr].instr.imm_labeled = 0;
+                    mem_pass1[current_addr].instr.addr = addr;
                 }
             }
 
@@ -263,12 +263,12 @@ void parseLine(char *lineptr, int linenum, char *filename)
                 // d
                 int reg = getReg(token_ptr, 0);
                 assert_reg(reg, linenum, filename);
-                memory[current_addr].instr.rd = reg;
+                mem_pass1[current_addr].instr.rd = reg;
                 token_ptr = line[++current_token];
             }
 
             // Next address
-            memory[current_addr].addr = current_addr;
+            mem_pass1[current_addr].addr = current_addr;
             current_addr++;
         }
 
@@ -276,52 +276,24 @@ void parseLine(char *lineptr, int linenum, char *filename)
         {
             token_ptr = line[++current_token];
 
-            if (macro == MACRO_INC || macro == MACRO_DEC)
+            mem_pass1[current_addr].instr.opcode = macro;
+            mem_pass1[current_addr].instr.filename = filename;
+            mem_pass1[current_addr].instr.linenum = linenum;
+            mem_pass1[current_addr].type = MEM_TYPE_MACRO;
+
+            if (macro == MACRO_INC || macro == MACRO_DEC || macro == MACRO_PUSH || macro == MACRO_POP)
             {
                 int rd = getReg(token_ptr, 0);
                 assert_reg(rd, linenum, filename);
-
-                memory[current_addr].type = MEM_TYPE_INST;
-                memory[current_addr].addr = current_addr;
-                macroIncDec(macro, rd, &memory[current_addr].instr);
-                current_addr++;
+                mem_pass1[current_addr].instr.rd = rd;
             }
 
-            else if (macro == MACRO_PUSH)
+            else if (macro == MACRO_CALL)
             {
-                int rd = getReg(token_ptr, 0);
-                assert_reg(rd, linenum, filename);
-
-                // decrement stack pointer
-                memory[current_addr].type = MEM_TYPE_INST;
-                memory[current_addr].addr = current_addr;
-                macroIncDec(1, 13, &memory[current_addr].instr);
-                current_addr++;
-
-                // store rd to stack
-                memory[current_addr].type = MEM_TYPE_INST;
-                memory[current_addr].addr = current_addr;
-                format1inst(&memory[current_addr].instr, 0x0B, rd, 0, 13);
-                current_addr++;
+                strcpy(mem_pass1[current_addr].instr.label_name, token_ptr);
             }
 
-            else if (macro == MACRO_POP)
-            {
-                int rd = getReg(token_ptr, 0);
-                assert_reg(rd, linenum, filename);
-
-                // load rd from stack
-                memory[current_addr].type = MEM_TYPE_INST;
-                memory[current_addr].addr = current_addr;
-                format1inst(&memory[current_addr].instr, 0x0A, rd, 0, 13);
-                current_addr++;
-
-                // increment stack pointer
-                memory[current_addr].type = MEM_TYPE_INST;
-                memory[current_addr].addr = current_addr;
-                macroIncDec(0, 13, &memory[current_addr].instr);
-                current_addr++;
-            }
+            current_addr++;
         }
     }
 }

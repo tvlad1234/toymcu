@@ -5,7 +5,7 @@
 enum
 {
     TYPE_OPCODE,
-    TYPE_DATA,
+    TYPE_DATA
 };
 
 enum
@@ -35,6 +35,7 @@ enum
     MACRO_DEC,
     MACRO_PUSH,
     MACRO_POP,
+    MACRO_CALL,
     MACRO_NUMBER
 };
 
@@ -64,7 +65,8 @@ enum
 enum
 {
     MEM_TYPE_INST,
-    MEM_TYPE_DATA
+    MEM_TYPE_DATA,
+    MEM_TYPE_MACRO
 };
 
 struct instr_struct
@@ -87,6 +89,7 @@ struct mem_loc_struct
     uint16_t addr;
     uint16_t data;
     instr_t instr;
+    int label_id;
 };
 typedef struct mem_loc_struct mem_loc_t;
 
@@ -117,5 +120,9 @@ void parseLine(char *lineptr, int linenum, char *filename);
 
 uint16_t machine_inst(instr_t *inst);
 void format1inst(instr_t *instr, int opcode, int rd, int rs, int rt);
-void macroIncDec(int macro, int rd, instr_t *instr);
+void macroIncDec(int macro, int rd, mem_loc_t *mem, int *current_addr);
 void showMemLoc(mem_loc_t *mem);
+
+void macroPop(int macro, int rd, mem_loc_t *mem, int *current_addr);
+void macroPush(int macro, int rd, mem_loc_t *mem, int *current_addr);
+void macroCall(int macro, int addr, mem_loc_t *mem, int *current_addr);
