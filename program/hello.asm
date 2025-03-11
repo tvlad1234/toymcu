@@ -41,8 +41,7 @@ LDA R2, OFFSET msg_hello
 ADD R2, R2, R3
 
 # and call print_string
-LDA CS, SEGMENT print_string
-JL RC, OFFSET print_string
+CALL print_string
 
 # enable UART and timer counter interrupts (bits 0 and 2 of the interupt enable register)
 LDA DS, SEGMENT INT_CTRL

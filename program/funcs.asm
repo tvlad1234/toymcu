@@ -16,11 +16,8 @@ out_char:
   LDA CS, SEGMENT ret_print_string
   BZ R2, OFFSET ret_print_string
 
-# call UART Tx function, link through RC
-  PUSH RC
-  LDA CS, SEGMENT uart_tx
-  JL RC, OFFSET uart_tx
-  POP RC
+# call UART Tx function
+CALL uart_tx
 
 # increment message pointer
 INC R3
@@ -33,7 +30,7 @@ ret_print_string:
   POP R3
   POP R2
   POP CS
-  JMP RC
+  RET
 
 # end print_string
 ###################################
@@ -61,10 +58,10 @@ BZ R2, OFFSET uart_check
 POP R2
 ST R2, OFFSET UART_DATA
 
-# restore DS and return to main program (through RC)
+# restore DS and return
 POP DS
 POP CS
-JMP RC
+RET
 
 # end uart_tx
 ###################################

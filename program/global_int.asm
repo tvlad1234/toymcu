@@ -47,26 +47,17 @@ int_ret:
   JMP R0
 
 jmp_uart:
-  LDA CS, SEGMENT uart_int
-  PUSH RC
-  JL RC, OFFSET uart_int
-  POP RC
+  CALL uart_int
   LDA CS, SEGMENT int_ret
   JL R0, OFFSET int_ret
 
 jmp_timer_tick:
-  LDA CS, SEGMENT timer_tick_int
-  PUSH RC
-  JL RC, OFFSET timer_tick_int
-  POP RC
+  CALL timer_tick_int
   LDA CS, SEGMENT int_ret
   JL R0, OFFSET int_ret
 
 jmp_timer_cnt:
-  LDA CS, SEGMENT timer_cnt_int
-  PUSH RC
-  JL RC, OFFSET timer_cnt_int
-  POP RC
+  CALL timer_cnt_int
   LDA CS, SEGMENT int_ret
   JL R0, OFFSET int_ret
 

@@ -99,6 +99,9 @@ int main(int argc, char *argv[])
 
             else if (macro == MACRO_CALL)
                 macroCall(mem, &current_addr);
+
+            else if (macro == MACRO_RET)
+                macroRet(mem, &current_addr);
         }
         else
             current_addr++;

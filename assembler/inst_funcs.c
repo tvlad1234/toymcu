@@ -111,6 +111,14 @@ void macroCall(mem_loc_t *mem, int *current_addr)
     macroPop(12, mem, current_addr);
 }
 
+void macroRet(mem_loc_t *mem, int *current_addr)
+{
+    mem->type = MEM_TYPE_INST;
+    mem->addr = *current_addr;
+    format1inst(&mem->instr, 0xE, 12, 0, 0);
+    *current_addr = *current_addr + 1;
+}
+
 void showMemLoc(mem_loc_t *mem)
 {
     printf("at %d: ", mem->addr);

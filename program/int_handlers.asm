@@ -7,13 +7,10 @@ LDA DS, SEGMENT UART_DATA
 LD R2, OFFSET UART_DATA
 
 # call uart_tx
-LDA CS, SEGMENT uart_tx
-PUSH RC
-JL RC, OFFSET uart_tx
-POP RC
+CALL uart_tx
 
 # return to interrupt handler
-JMP RC
+RET
 
 # end uart_int
 ###################################
@@ -27,13 +24,10 @@ timer_tick_int:
 LDA R2, 84
 
 # call uart_tx
-LDA CS, SEGMENT uart_tx
-PUSH RC
-JL RC, OFFSET uart_tx
-POP RC
+CALL uart_tx
 
 # return to interrupt handler
-JMP RC
+RET
 
 # end timer_tick_int
 ###################################
@@ -52,13 +46,10 @@ ST R2, OFFSET GPIO_TOGGLE
 LDA R2, OFFSET msg_timer
 
 # call print_string
-LDA CS, SEGMENT print_string
-PUSH RC
-JL RC, OFFSET print_string
-POP RC
+CALL print_string
 
 # return to interrupt handler
-JMP RC
+RET
 
 # end timer_cnt_int
 ###################################

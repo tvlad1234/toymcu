@@ -36,6 +36,7 @@ enum
     MACRO_PUSH,
     MACRO_POP,
     MACRO_CALL,
+    MACRO_RET,
     MACRO_NUMBER
 };
 
@@ -126,3 +127,4 @@ void showMemLoc(mem_loc_t *mem);
 void macroPop(int rd, mem_loc_t *mem, int *current_addr);
 void macroPush(int rd, mem_loc_t *mem, int *current_addr);
 void macroCall(mem_loc_t *mem, int *current_addr);
+void macroRet(mem_loc_t *mem, int *current_addr);
