@@ -19,14 +19,14 @@ This project uses makefiles and various open-source tools for its build system. 
 The [hw](hw) folder contains the Verilog implementation of the toymcu, simulation testbench and a top-level design meant for the Colorlight 5A-75B V8.0 board.
 
 ### Assembler
-The [assembler](assembler/) folder contains the assembler for the toymcu. [This file](docs/build_system.md) explains the features and usage of the assembler.
+The [assembler](assembler/) folder contains the assembler for the toymcu. [This file](docs/assembler.md) explains the features and usage of the assembler.
 
 ### Example program
 The [program](program) folder contains an example program for the toymcu, which showcases UART and GPIO output, as well as UART and timer interrupts. The program source is split across multiple assembly files
 
 ## To do
 - Documentation
-    - assembler
+    - instruction set architecture
     - improvements made upon the original TOY ISA
     - peripherals registers and usage
 - Implement GPIO interrupts
