@@ -9,14 +9,14 @@ During the 3rd year, I decided I wanted to improve my digital hardware design sk
 
 After I was pleased with the state of the CPU core, I started to work on the [assembler](assembler/), in order to be able to write programs without having to type machine code by hand directly into memory. I also implemented the transmit part of a UART, at this point being able to output characters to a serial console.
 
-With the CPU core and assembler mostly functional, I decided to impelement more [peripherals](hw/peripherals/). I ended up implementing a full bidirectional UART, a timer, GPIO port and interrupt controller, basically turning the project into what can universally be considered a microcontroller.
+With the CPU core and assembler mostly functional, I decided to implement more [peripherals](hw/peripherals/). I ended up implementing a full bidirectional UART, a timer, GPIO port and interrupt controller, basically turning the project into what can universally be considered a microcontroller.
 
 ## Repository contents
 ### Build system
 This project uses makefiles and various open-source tools for its build system. The usage of this build system is described in [this file](docs/build_system.md).
 
 ### Hardware design
-The [hw](hw) folder contains the Verilog implementation of the toymcu, simulation testbench and a top-level design meant for the Colorlight 5A-75B V8.0 board.
+The [hw](hw) folder contains the Verilog implementation of the toymcu, simulation testbench and a top-level design meant for the Colorlight 5A-75B V8.2 board.
 
 ### Assembler
 The [assembler](assembler/) folder contains the assembler for the toymcu. [This file](docs/assembler.md) explains the features and usage of the assembler.
@@ -24,10 +24,14 @@ The [assembler](assembler/) folder contains the assembler for the toymcu. [This 
 ### Example program
 The [program](program) folder contains an example program for the toymcu, which showcases UART and GPIO output, as well as UART and timer interrupts. The program source is split across multiple assembly files
 
+## Documentation
+- [The build system](docs/build_system.md)
+- [Improvements made upon the original Princeton TOY ISA](docs/toy_improvements.md)
+- [The TOY ISA](docs/isa.md)
+- [The `toyasm` assembler](docs/assembler.md)
+
 ## To do
 - Documentation
-    - instruction set architecture
-    - improvements made upon the original TOY ISA
     - peripherals registers and usage
 - Implement GPIO interrupts
 - Clean up the assembler source code
