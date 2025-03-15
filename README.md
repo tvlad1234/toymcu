@@ -1,6 +1,6 @@
 # toymcu
 
-This repository contains the Verilog implementation of a microcontroller, based around a CPU core which uses an extension of the Princeton TOY instruction set architecture, as well as an assembler and example program.
+This repository contains the Verilog implementation of a microcontroller, based around a CPU core which uses an extension of the [Princeton TOY instruction set architecture](https://introcs.cs.princeton.edu/java/62toy/), as well as an assembler and example program.
 
 ## How it came to be
 During my 2nd year of university, I studied the basics of digital hardware design, using VHDL. Out of personal curiosity and passion for the subject, I had the idea of implementing a small CPU design. While looking for possible instruction set architectures to use, I came across the TOY ISA, developed by Princeton University, to use in their Computer Science courses. I settled on it, considering its simplicity and the fact that nobody had (publically, at least) implemented it in hardware previously.
@@ -26,7 +26,6 @@ The [program](program) folder contains an example program for the toymcu, which 
 
 ## To do
 - Documentation
-    - build system
     - assembler
     - improvements made upon the original TOY ISA
     - peripherals registers and usage
