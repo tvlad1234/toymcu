@@ -12,7 +12,7 @@ ${TOPMODULE}.bit : ${TOPMODULE}_out.config
 ${TOPMODULE}.svf : ${TOPMODULE}.bit
 
 hw_prog: ${TOPMODULE}.bit
-	ecpdap prog $<
+	openFPGALoader --cable cmsisdap --vid=0x2e8a --pid=0x0006 $<
 
 clean_hw:
 	rm -f *.svf *.bit *.config *.json *.cf *.vcd *.vvp
