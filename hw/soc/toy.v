@@ -61,15 +61,16 @@ module toy #(parameter BAUD_DIV = 217)
   end
 
   wire toy_ce = 1;
-  wire halted;
+  wire halted, toy_reset;
 
   assign interrupt_lines = {13'd0, timer_cnt_int, timer_tick_int, uart_int};
 
-  interrupt_ctrl toy_interrupt_ctrl(i_clk, i_reset, bus_we, bus_addr, bus_write_data, interrupt_read_data, interrupt_lines, toy_int);
-  timer toy_timer(i_clk, i_reset, bus_we, bus_addr, bus_write_data, timer_read_data, timer_tick_int, timer_cnt_int);
-  gpio toy_gpio(i_clk, i_reset, bus_we, bus_addr, bus_write_data, gpio_read_data, i_gp, o_gp);
-  uart #(.BAUD_DIV(BAUD_DIV)) toy_uart(i_clk, i_reset, bus_we, bus_addr, bus_write_data[7:0], uart_read_data, o_tx, i_rx, uart_int);
+  reset_ctrl toy_reset_ctrl(i_clk, i_reset, toy_reset);
+  interrupt_ctrl toy_interrupt_ctrl(i_clk, toy_reset, bus_we, bus_addr, bus_write_data, interrupt_read_data, interrupt_lines, toy_int);
+  timer toy_timer(i_clk, toy_reset, bus_we, bus_addr, bus_write_data, timer_read_data, timer_tick_int, timer_cnt_int);
+  gpio toy_gpio(i_clk, toy_reset, bus_we, bus_addr, bus_write_data, gpio_read_data, i_gp, o_gp);
+  uart #(.BAUD_DIV(BAUD_DIV)) toy_uart(i_clk, toy_reset, bus_we, bus_addr, bus_write_data[7:0], uart_read_data, o_tx, i_rx, uart_int);
   ram toy_ram(i_clk, toy_ce, bus_we, bus_addr, bus_write_data, ram_read_data);
-  cpu toy_cpu(i_clk, toy_ce, i_reset, bus_read_data, bus_write_data, bus_addr, bus_we, halted, toy_int);
+  cpu toy_cpu(i_clk, toy_ce, toy_reset, bus_read_data, bus_write_data, bus_addr, bus_we, halted, toy_int);
 
 endmodule
