@@ -151,7 +151,7 @@ module cpu (
   always @(inst_opcode, reg_data_1, inst_addr_imm, pc, reg_addr_1, o_int_ret_pc)
   begin
 
-    if((inst_opcode == 4'hF) || (inst_opcode == 4'hC && reg_data_1 == 0) || (inst_opcode == 4'hD && !reg_data_1[15]) )
+    if((inst_opcode == 4'hF) || (inst_opcode == 4'hC && reg_data_1 == 0) || (inst_opcode == 4'hD && !reg_data_1[15] && reg_data_1 != 0) )
     begin
       next_pc = (reg_seg_c << 8) + inst_addr_imm;
       iret = 0;
