@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     addLabel(&labels[num_labels++], 0x401, "UART_STATUS");
 
     addLabel(&labels[num_labels++], 0x410, "INT_CTRL");
+    addLabel(&labels[num_labels++], 0x411, "INT_EN");
 
     addLabel(&labels[num_labels++], 0x420, "TIM_CNT");
     addLabel(&labels[num_labels++], 0x421, "TIM_PRESC");

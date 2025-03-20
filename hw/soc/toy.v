@@ -44,7 +44,7 @@ module toy #(parameter BAUD_DIV = 217)
       bus_read_data = {8'd0, uart_read_data};
 
     // Interrupt controller
-    else if(bus_addr == 16'h0410)
+    else if(bus_addr == 16'h0410 || bus_addr == 16'h0411)
       bus_read_data = interrupt_read_data;
 
     // Timer

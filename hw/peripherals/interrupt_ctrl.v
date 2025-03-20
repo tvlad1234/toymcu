@@ -22,12 +22,8 @@ module interrupt_ctrl #(parameter BASE_ADDR = 16'h0410)
     begin
       if((i_lines & int_en) != 0)
       begin
-        for(integer i = 0; i<16; i++)
-          if(i_lines[i] && int_en[i])
-          begin
-            o_int <= 1;
-            int_number <= i+1;
-          end
+        o_int <= 1;
+        int_number <= i_lines;
       end
       else
         o_int <= 0;
@@ -35,14 +31,18 @@ module interrupt_ctrl #(parameter BASE_ADDR = 16'h0410)
       case (i_addr)
         BASE_ADDR:
         begin
+          o_data <= int_number;
+        end
 
+        BASE_ADDR + 1: // Interrupt enable
+        begin
           if(i_we)
           begin
             int_en <= i_data;
           end
           else
           begin
-            o_data <= int_number;
+            o_data <= int_en;
           end
         end
 

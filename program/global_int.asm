@@ -17,23 +17,23 @@ PUSH R4
 LDA DS, SEGMENT INT_CTRL
 LD R2, OFFSET INT_CTRL
 
-# check if int == 1:
+# UART
 LDA R3, 1
-XOR R4, R3, R2
+AND R4, R3, R2
 LDA CS, SEGMENT jmp_uart
-BZ R4, OFFSET jmp_uart
+BP R4, OFFSET jmp_uart
 
-# check if int == 2:
-INC R3
-XOR R4, R3, R2
+# Timer tick
+LS R3, R3, R1
+AND R4, R3, R2
 LDA CS, SEGMENT jmp_timer_tick
-BZ R4, OFFSET jmp_timer_tick
+BP R4, OFFSET jmp_timer_tick
 
-# check if int == 3:
-INC R3
-XOR R4, R3, R2
+# Timer counter compare
+LS R3, R3, R1
+AND R4, R3, R2
 LDA CS, SEGMENT jmp_timer_cnt
-BZ R4, OFFSET jmp_timer_cnt
+BP R4, OFFSET jmp_timer_cnt
 
 # Return from interrupt (JMP R0 will eventually be an IRET macro)
 int_ret:

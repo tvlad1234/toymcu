@@ -7,7 +7,7 @@ main:
 
 # configure timer
 
-# place 0xff in R2 ...
+# place 0xffff in R2 ...
 LDA R2, 0xFF
 LDA R3, 8
 LS R2, R2, R3
@@ -44,9 +44,9 @@ ADD R2, R2, R3
 CALL print_string
 
 # enable UART and timer counter interrupts (bits 0 and 2 of the interupt enable register)
-LDA DS, SEGMENT INT_CTRL
+LDA DS, SEGMENT INT_EN
 LDA R2, 5
-ST R2, OFFSET INT_CTRL
+ST R2, OFFSET INT_EN
 
 # infinite loop:
 LDA CS, SEGMENT inf_loop
