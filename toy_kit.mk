@@ -2,7 +2,7 @@ TOYASM = toyasm.exe
 
 PROGRAM_MEM = program/rom.mem
 $(PROGRAM_MEM) : $(TOYASM) $(TOY_PROGRAM_SRC)
-	./$(TOYASM) $(TOY_PROGRAM_SRC) $@
+	./$(TOYASM) -r $(TOY_PROGRAM_SRC) $@
 
 CC = gcc
 

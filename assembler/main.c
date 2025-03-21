@@ -11,6 +11,7 @@ int num_labels = 0;
 mem_loc_t mem_pass1[1024], mem_pass2[1024];
 int num_loc_1 = 0, num_loc_2 = 0;
 int current_addr = 0;
+int mem_offset = 0;
 
 void addLabel(label_t *l, uint16_t addr, char *name)
 {
@@ -63,17 +64,24 @@ int main(int argc, char *argv[])
     addLabel(&labels[num_labels++], 0x430, "GPIO_DATA");
     addLabel(&labels[num_labels++], 0x431, "GPIO_TOGGLE");
 
-    for (int i = 1; i < argc - 1; i++)
-    {
-        assembleFile(argv[i]);
-        num_loc_1 = current_addr;
-    }
+    int currentArg = 1;
 
-    /*
-        printf("First pass result:\n\r");
-        for (int i = 0; i < num_loc_1; i++)
-            showMemLoc(&mem_pass1[i]);
-    */
+    for (; currentArg < argc - 1; currentArg++)
+    {
+        if (argv[currentArg][0] == '-')
+        {
+            if (argv[currentArg][1] == 'r')
+            {
+                printf("Assembling for ROM\n\r");
+                mem_offset = 0x2000;
+            }
+        }
+        else
+        {
+            assembleFile(argv[currentArg]);
+            num_loc_1 = current_addr;
+        }
+    }
 
     // Macro expansion
     current_addr = 0;
@@ -116,8 +124,8 @@ int main(int argc, char *argv[])
         int label_id = mem->label_id;
         if (label_id)
         {
-            labels[label_id].addr = i;
-            printf("Label \"%s\" at addr %d\n\r", labels[label_id].name, labels[label_id].addr);
+            labels[label_id].addr = i + mem_offset;
+            // printf("Label \"%s\" at addr %x\n\r", labels[label_id].name, labels[label_id].addr);
         }
     }
 
@@ -163,10 +171,6 @@ int main(int argc, char *argv[])
         else
             current_addr++;
     }
-
-    printf("\n\rSecond pass result:\n\r");
-    for (int i = 0; i < num_loc_2; i++)
-        showMemLoc(&mem_pass2[i]);
 
     printf("%d memory locations used\n\n\r", num_loc_2);
 
