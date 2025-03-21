@@ -96,6 +96,7 @@ void macroCall(mem_loc_t *mem, int *current_addr)
 
     // set code segment
     format2inst(&mem->instr, 7, 14, mem->instr.addr, IMM_SEGMENT, func_name);
+    mem->instr.imm_labeled = 1;
     mem->addr = *current_addr;
     *current_addr = *current_addr + 1;
     mem++;
