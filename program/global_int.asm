@@ -1,7 +1,7 @@
-LDA R1, 1
 
 # Jump to main program area
-JL R0, pre_main
+LDA CS, SEGMENT pre_main
+JL R0, OFFSET pre_main
 
 ###################################
 # Interrupt handler (must always be at addr 0x0002)
@@ -68,9 +68,11 @@ jmp_timer_cnt:
 sp: DW 1023
 
 pre_main:
+LDA R1, 1
+
 # set the stack pointer
-LDA R2, sp
-LDI SP, R2
+LDA DS, SEGMENT sp
+LD SP, OFFSET sp
 
 LDA CS, SEGMENT main
 JL R0, OFFSET main

@@ -1,6 +1,6 @@
 TOYASM = toyasm.exe
 
-PROGRAM_MEM = program/$(TOY_PROGRAM_NAME).mem
+PROGRAM_MEM = program/rom.mem
 $(PROGRAM_MEM) : $(TOYASM) $(TOY_PROGRAM_SRC)
 	./$(TOYASM) $(TOY_PROGRAM_SRC) $@
 

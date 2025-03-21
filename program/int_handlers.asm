@@ -43,12 +43,19 @@ LDA R2, 0x01
 ST R2, OFFSET GPIO_TOGGLE
 
 # load message address in R2
+
+PUSH R3
+LDA R3, SEGMENT msg_timer
+LDA R2, 8
+LS R3, R3, R2
 LDA R2, OFFSET msg_timer
+ADD R2, R2, R3
+POP R3
 
 # call print_string
 CALL print_string
 
-# return to interrupt handler
+# return to global interrupt handler
 RET
 
 # end timer_cnt_int

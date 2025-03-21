@@ -19,6 +19,7 @@ module toy #(parameter BAUD_DIV = 217)
   wire bus_we;
 
   wire [15:0] ram_read_data;
+  wire [15:0] rom_read_data;
 
   wire [15:0] interrupt_read_data;
   wire [15:0] interrupt_lines;
@@ -36,8 +37,12 @@ module toy #(parameter BAUD_DIV = 217)
   begin
 
     // RAM
-    if (bus_addr <= 10'h3ff)
+    if (bus_addr <= 16'h03ff)
       bus_read_data = ram_read_data;
+
+    // ROM
+    else if (bus_addr >= 16'h2000 && bus_addr < 16'h2400)
+      bus_read_data = rom_read_data;
 
     // UART
     else if (bus_addr == 16'h0400 || bus_addr == 16'h0401)
@@ -71,6 +76,7 @@ module toy #(parameter BAUD_DIV = 217)
   gpio toy_gpio(i_clk, toy_reset, bus_we, bus_addr, bus_write_data, gpio_read_data, i_gp, o_gp);
   uart #(.BAUD_DIV(BAUD_DIV)) toy_uart(i_clk, toy_reset, bus_we, bus_addr, bus_write_data[7:0], uart_read_data, o_tx, i_rx, uart_int);
   ram toy_ram(i_clk, toy_ce, bus_we, bus_addr, bus_write_data, ram_read_data);
+  rom toy_rom(i_clk, toy_ce, bus_addr, rom_read_data);
   cpu toy_cpu(i_clk, toy_ce, toy_reset, bus_read_data, bus_write_data, bus_addr, bus_we, halted, toy_int);
 
 endmodule

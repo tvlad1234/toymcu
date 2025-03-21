@@ -13,7 +13,7 @@ module cpu (
     input wire i_int
   );
 
-  localparam interrupt_vector = 16'h2;
+  localparam interrupt_vector = 16'h2002;
 
   // Internal signals:
   reg [15:0] pc;
@@ -201,7 +201,7 @@ module cpu (
             begin
               interrupt <= 0;
               int_enable <= 1;
-              pc <= 0;
+              pc <= 16'h2000;
               currentState <= state_read_inst;
             end
 
