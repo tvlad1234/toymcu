@@ -29,6 +29,7 @@ The [program](program) folder contains an example program for the toymcu, which 
 - [Improvements made upon the original Princeton TOY ISA](docs/toy_improvements.md)
 - [The TOY ISA](docs/isa.md)
 - [The `toyasm` assembler](docs/assembler.md)
+- [Memory map](docs/memory_map.md)
 - Peripherals
     - [Interrupt controller](docs/peripherals/interrupt_ctrl.md)
     - [UART](docs/peripherals/uart.md)
