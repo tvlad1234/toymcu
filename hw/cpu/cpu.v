@@ -10,10 +10,9 @@ module cpu (
     output reg [15:0] o_mem_addr,
     output reg o_ram_we,
     output reg o_halted,
+    input wire [15:0] i_int_addr,
     input wire i_int
   );
-
-  localparam interrupt_vector = 16'h2002;
 
   // Internal signals:
   reg [15:0] pc;
@@ -22,7 +21,7 @@ module cpu (
 
   // Interrupt control
   reg interrupt, int_enable;
-  reg [15:0] o_int_ret_pc;
+  reg [15:0] int_ret_pc;
 
   // Instruction decoding
   wire [3:0] inst_opcode = ir[15:12];
@@ -148,7 +147,7 @@ module cpu (
 
   reg iret;
 
-  always @(inst_opcode, reg_data_1, inst_addr_imm, pc, reg_addr_1, o_int_ret_pc)
+  always @(inst_opcode, reg_data_1, inst_addr_imm, pc, reg_addr_1, int_ret_pc)
   begin
 
     if((inst_opcode == 4'hF) || (inst_opcode == 4'hC && reg_data_1 == 0) || (inst_opcode == 4'hD && !reg_data_1[15] && reg_data_1 != 0) )
@@ -162,7 +161,7 @@ module cpu (
       // JMP R0 return from interrupt
       if(reg_addr_1 == 0)
       begin
-        next_pc = o_int_ret_pc;
+        next_pc = int_ret_pc;
         iret = 1;
       end
       else
@@ -233,8 +232,8 @@ module cpu (
 
               if(interrupt)
               begin
-                pc <= interrupt_vector;
-                o_int_ret_pc <= next_pc;
+                pc <= i_int_addr;
+                int_ret_pc <= next_pc;
                 interrupt <= 0;
               end
               else

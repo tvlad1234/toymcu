@@ -1,5 +1,7 @@
 # Hello world and interrupt handler demo
-# prints "Hello world!" on reset and then echoes data received over UART using interrupt
+# prints "Hello world!" on startup
+# echoes data received over UART
+# displays a message and toggles a GPIO line every second
 
 ###################################
 # Main program
@@ -37,8 +39,17 @@ ADD R2, R2, R3
 # and call print_string
 CALL print_string
 
+# load interrupt handler address into R2 and write it to the interrupt controller
+LDA R3, SEGMENT interrupt_handler
+LDA R2, 8
+LS R3, R3, R2
+LDA R2, OFFSET interrupt_handler
+ADD R2, R2, R3
+
+LDA DS, SEGMENT INT_ADDR
+ST R2, OFFSET INT_ADDR
+
 # enable UART and timer counter interrupts (bits 0 and 2 of the interupt enable register)
-LDA DS, SEGMENT INT_EN
 LDA R2, 5
 ST R2, OFFSET INT_EN
 

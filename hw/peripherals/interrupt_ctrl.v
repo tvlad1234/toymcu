@@ -9,6 +9,7 @@ module interrupt_ctrl #(parameter BASE_ADDR = 16'h0410)
     input wire[15:0] i_data,
     output reg [15:0] o_data,
 
+    output reg [15:0] o_int_addr,
     input wire [15:0] i_lines,
     output reg o_int
   );
@@ -46,6 +47,18 @@ module interrupt_ctrl #(parameter BASE_ADDR = 16'h0410)
           end
         end
 
+        BASE_ADDR + 2: // Interrupt handler address
+        begin
+          if(i_we)
+          begin
+            o_int_addr <= i_data;
+          end
+          else
+          begin
+            o_data <= o_int_addr;
+          end
+        end
+
         default:
         begin
           o_data <= 0;
@@ -59,6 +72,7 @@ module interrupt_ctrl #(parameter BASE_ADDR = 16'h0410)
       int_number <= 0;
       o_data <= 0;
       int_en <= 0;
+      o_int_addr <= 16'h0000;
     end
 
   end
