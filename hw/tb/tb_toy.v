@@ -34,12 +34,40 @@ module tb_toy;
     #1 rst = 1;
     #2 rst = 0;
 
-    tx_data = 65;
-    #8000 tx_go = 1;
+    tx_data = "w";
+    #1000 tx_go = 1;
     #2 tx_go = 0;
 
-    tx_data = 68;
-    #4000 tx_go = 1;
+    tx_data = "a";
+    #1000 tx_go = 1;
+    #2 tx_go = 0;
+
+    tx_data = "b";
+    #1000 tx_go = 1;
+    #2 tx_go = 0;
+
+    /*
+    tx_data = "r";
+    #1500 tx_go = 1;
+    #2 tx_go = 0;
+    */
+    
+
+    tx_data = "w";
+    #1000 tx_go = 1;
+    #2 tx_go = 0;
+
+    tx_data = 0;
+    #1000 tx_go = 1;
+    #2 tx_go = 0;
+
+    tx_data = 0;
+    #1000 tx_go = 1;
+    #2 tx_go = 0;
+
+
+    tx_data = "e";
+    #1000 tx_go = 1;
     #2 tx_go = 0;
 
     #10000 $finish;
