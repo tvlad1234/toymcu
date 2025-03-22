@@ -14,4 +14,5 @@
     - [Timer](/docs/peripherals/timer.md) at 0420h
     - GPIO at 0430h
 - ROM at 2000h
+    - contains the UART bootloader
     - 1024 locations

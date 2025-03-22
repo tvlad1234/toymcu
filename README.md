@@ -21,8 +21,11 @@ The [hw](hw) folder contains the Verilog implementation of the toymcu, simulatio
 ### Assembler
 The [assembler](assembler/) folder contains the assembler for the toymcu. [This file](docs/assembler.md) explains the features and usage of the assembler.
 
+### Boot ROM and loader tool
+The `toymcu` starts executing code from a ROM memory. This memory contains a [bootloader](program/bootrom/main.asm) which loads code into RAM, over the UART. Code is sent using the [loader](loader/) tool.
+
 ### Example program
-The [program](program) folder contains an example program for the toymcu, which showcases UART and GPIO output, as well as UART and timer interrupts. The program source is split across multiple assembly files
+The [program/hello](program/hello) folder contains an example program for the toymcu, which showcases UART and GPIO output, as well as UART and timer interrupts. The program source is split across multiple assembly files
 
 ## Documentation
 - [The build system](docs/build_system.md)
