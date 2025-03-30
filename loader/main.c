@@ -15,6 +15,11 @@ char readByte(int serial_port)
     return r;
 }
 
+void writeByte(int serial_port, unsigned char c)
+{
+    write(serial_port, &c, 1);
+}
+
 int writeMem(uint16_t m, int serial_port)
 {
     uint8_t lsb = m & 0xFF;
@@ -22,24 +27,21 @@ int writeMem(uint16_t m, int serial_port)
 
     printf("Sending %02x%02x\n\r", msb, lsb);
 
-    uint8_t c = 'w';
-    write(serial_port, &c, 1);
+    writeByte(serial_port, 'w');
     if (readByte(serial_port) != 'm')
     {
         printf("error!\n\r");
         return 1;
     }
-    c = msb;
-    write(serial_port, &c, 1);
+
+    writeByte(serial_port, msb);
     if (readByte(serial_port) != 'l')
     {
         printf("error!\n\r");
         return 1;
     }
-    c = lsb;
-    write(serial_port, &c, 1);
-
-    c = readByte(serial_port);
+    writeByte(serial_port, lsb);
+    unsigned char c = readByte(serial_port);
     if (c != msb)
     {
         printf("error msb %02x\n\r", c);
@@ -52,8 +54,7 @@ int writeMem(uint16_t m, int serial_port)
         printf("error lsb %02x\n\r", c);
         return 1;
     }
-    c = 0;
-    write(serial_port, &c, 1);
+
     return 0;
 }
 
@@ -156,8 +157,7 @@ int main(int argc, char *argv[])
         exit(-1);
 
 retry:
-    char c = 'r';
-    write(serial_port, &c, 1);
+    writeByte(serial_port, 'r');
 
     printf("Waiting for toymcu bootloader... \n\r");
     while (readByte(serial_port) != 0x05)
@@ -169,8 +169,7 @@ retry:
             goto retry;
 
     printf("Done, launching program\n\r");
-    c = 'e';
-    write(serial_port, &c, 1);
+    writeByte(serial_port, 'e');
 
     close(serial_port);
 
